@@ -458,8 +458,12 @@ class Consumer(object):
                     return on_unknown_message(body, message)
 
             if is_proto2:
-                body = proto2_to_proto1(
-                    self.app, type_, body, message, headers)
+                try:
+                    body = proto2_to_proto1(
+                        self.app, type_, body, message, headers)
+                except ValueError as e:
+                    logger.error("Poison task for celery 4 hit.", e, exc_info=True)
+                    return
 
             try:
                 strategies[type_](message, body,
