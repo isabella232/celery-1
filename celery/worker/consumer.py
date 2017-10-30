@@ -463,7 +463,7 @@ class Consumer(object):
                         self.app, type_, body, message, headers)
                 except ValueError as e:
                     logger.error("Poison task for celery 4 hit.", e, exc_info=True)
-                    return
+                    return on_unknown_message(body, message)
 
             try:
                 strategies[type_](message, body,
